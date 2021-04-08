@@ -44,12 +44,12 @@ struct CanMsg
 class Can
 {
 private:
-	static const uint32_t reg_bases_[2];
+	static const uint32_t module_bases_[2];
 	static const uint32_t tx_pins_[2];
 	static const uint32_t tx_pin_configs_[2];
 	static const uint32_t rx_pins_[2];
 	static const uint32_t rx_pin_configs_[2];
-	const uint32_t reg_base_;
+	const uint32_t module_base_;
 
 	static const size_t tx_msg_count_;
 	static const size_t rx_msg_count_;
@@ -125,7 +125,7 @@ void Can::SendArray(size_t msg_type, const SimpleArray<T, data_size>& data)
 		return;
 	}
 
-	CAN_sendMessage(reg_base_,
+	CAN_sendMessage(module_base_,
 					tx_msg_[msg_type].obj_id,
 					tx_msg_[msg_type].len,
 					tx_msg_[msg_type].data);
@@ -172,7 +172,7 @@ void Can::Send(size_t msg_type, T data)
 		return;
 	}
 
-	CAN_sendMessage(reg_base_,
+	CAN_sendMessage(module_base_,
 					tx_msg_[msg_type].obj_id,
 					tx_msg_[msg_type].len,
 					tx_msg_[msg_type].data);

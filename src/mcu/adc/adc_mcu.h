@@ -20,7 +20,7 @@ namespace mcu {
 class Adc
 {
 private:
-	static const uint32_t reg_bases_[3];
+	static const uint32_t module_bases_[3];
 	float zero_current_values_[3];
 
 	Adc(const Adc& other);				// no copy constructor

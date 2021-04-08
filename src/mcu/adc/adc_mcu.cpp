@@ -17,7 +17,7 @@ __interrupt void ISR_ADC_TemperatureC();
 
 namespace mcu {
 
-const uint32_t Adc::reg_bases_[3] = {ADCA_BASE, ADCB_BASE, ADCC_BASE};
+const uint32_t Adc::module_bases_[3] = {ADCA_BASE, ADCB_BASE, ADCC_BASE};
 
 
 /**
@@ -29,10 +29,10 @@ Adc::Adc()
 {
 	for (uint32_t i = 0; i < 3; ++i)
 	{
-		ADC_setPrescaler(reg_bases_[i], ADC_CLK_DIV_4_0);	// fclk(adc)max = 50 MHz
-		ADC_setMode(reg_bases_[i], ADC_RESOLUTION_12BIT, ADC_MODE_SINGLE_ENDED);
-		ADC_setInterruptPulseMode(reg_bases_[i], ADC_PULSE_END_OF_CONV);
-		ADC_enableConverter(reg_bases_[i]);
+		ADC_setPrescaler(module_bases_[i], ADC_CLK_DIV_4_0);	// fclk(adc)max = 50 MHz
+		ADC_setMode(module_bases_[i], ADC_RESOLUTION_12BIT, ADC_MODE_SINGLE_ENDED);
+		ADC_setInterruptPulseMode(module_bases_[i], ADC_PULSE_END_OF_CONV);
+		ADC_enableConverter(module_bases_[i]);
 		DEVICE_DELAY_US(1000);							// delay for power-up
 	}
 

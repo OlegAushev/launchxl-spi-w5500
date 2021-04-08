@@ -19,7 +19,7 @@ namespace mcu {
 class Pwm
 {
 private:
-	static const uint32_t reg_bases_[3];
+	static const uint32_t module_bases_[3];
 
 	uint16_t fund_freq_;
 	uint16_t sw_freq_;
@@ -63,7 +63,7 @@ public:
 	{
 		for (uint32_t i = 0; i < 3; ++i)
 		{
-			EPWM_setCounterCompareValue(reg_bases_[i],
+			EPWM_setCounterCompareValue(module_bases_[i],
 			                            EPWM_COUNTER_COMPARE_A,
 			                            sines[i]*period_);
 		}
@@ -78,7 +78,7 @@ public:
 	{
 		for (uint32_t i = 0; i < 3; ++i)
 		{
-			EPWM_setCounterCompareValue(reg_bases_[i],
+			EPWM_setCounterCompareValue(module_bases_[i],
 			                            EPWM_COUNTER_COMPARE_A,
 			                            reg_values[i]);
 		}
@@ -93,7 +93,7 @@ public:
 	{
 		for (uint32_t i = 0; i < 3; ++i)
 		{
-			EPWM_setCounterCompareValue(reg_bases_[i],
+			EPWM_setCounterCompareValue(module_bases_[i],
 			                            EPWM_COUNTER_COMPARE_A,
 			                            reg_values[i]);
 		}
@@ -109,8 +109,8 @@ public:
 		this->EnableInterrupts();
 		for (uint32_t i = 0; i < 3; ++i)
 		{
-			EPWM_clearTripZoneFlag(reg_bases_[i], EPWM_TZ_FLAG_OST);
-			EPWM_clearTripZoneFlag(reg_bases_[i], EPWM_TZ_INTERRUPT);
+			EPWM_clearTripZoneFlag(module_bases_[i], EPWM_TZ_FLAG_OST);
+			EPWM_clearTripZoneFlag(module_bases_[i], EPWM_TZ_INTERRUPT);
 		}
 		is_stopped_by_sw_ = false;
 	}
@@ -125,7 +125,7 @@ public:
 		is_stopped_by_sw_ = true;
 		for (uint32_t i = 0; i < 3; ++i)
 		{
-			EPWM_forceTripZoneEvent(reg_bases_[i], EPWM_TZ_FORCE_EVENT_OST);
+			EPWM_forceTripZoneEvent(module_bases_[i], EPWM_TZ_FORCE_EVENT_OST);
 		}
 		this->DisableInterrupts();
 	}

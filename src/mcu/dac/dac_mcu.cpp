@@ -10,7 +10,7 @@
 
 namespace mcu {
 
-const uint32_t Dac::reg_bases_[2] = {DACA_BASE, DACB_BASE};
+const uint32_t Dac::module_bases_[2] = {DACA_BASE, DACB_BASE};
 
 
 /**
@@ -49,9 +49,9 @@ Dac::Dac(DacAModuleState daca_state, DacBModuleState dacb_state) {
  */
 void Dac::Configure(DacModule dac)
 {
-	DAC_setReferenceVoltage(reg_bases_[dac], DAC_REF_ADC_VREFHI);
-	DAC_enableOutput(reg_bases_[dac]);
-	DAC_setShadowValue(reg_bases_[dac], 0);
+	DAC_setReferenceVoltage(module_bases_[dac], DAC_REF_ADC_VREFHI);
+	DAC_enableOutput(module_bases_[dac]);
+	DAC_setShadowValue(module_bases_[dac], 0);
 	DEVICE_DELAY_US(10);				// Delay for buffered DAC to power up
 }
 

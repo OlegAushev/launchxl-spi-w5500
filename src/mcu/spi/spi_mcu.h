@@ -14,10 +14,17 @@
 
 namespace mcu {
 
+enum SpiModule
+{
+	SPIA,
+	SPIB,
+	SPIC
+};
+
 class Spi
 {
 private:
-	static const uint32_t reg_bases_[3];
+	static const uint32_t module_bases_[3];
 	static const uint32_t simo_pins_[3];
 	static const uint32_t somi_pins_[3];
 	static const uint32_t clk_pins_[3];
@@ -28,12 +35,12 @@ private:
 	static const uint32_t clk_pin_configs_[3];
 	static const uint32_t te_pin_configs_[3];
 
-
-
-
-	const uint32_t reg_base_;
+	const uint32_t module_base_;
 public:
-	Spi();
+	Spi(SpiModule module, SPI_TransferProtocol protocol, SPI_Mode mode,
+		uint32_t bitrate, uint16_t data_width);
+
+	void SendNonBlocking(uint16_t data);
 };
 
 

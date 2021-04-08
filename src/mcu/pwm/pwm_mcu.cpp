@@ -14,7 +14,7 @@ __interrupt void ISR_EPWM_TZ();
 
 namespace mcu {
 
-const uint32_t Pwm::reg_bases_[3] = {EPWM1_BASE, EPWM2_BASE, EPWM3_BASE};
+const uint32_t Pwm::module_bases_[3] = {EPWM1_BASE, EPWM2_BASE, EPWM3_BASE};
 
 
 /**
@@ -67,72 +67,72 @@ Pwm::Pwm(uint16_t fund_freq, uint16_t sw_freq, uint16_t dt)
 									// UP-DOWN count - divide by 2
 	for (uint32_t i = 0; i < 3; ++i)
 	{
-		EPWM_setTimeBasePeriod(reg_bases_[i], period_);
-		EPWM_setPhaseShift(reg_bases_[i], phase_[i]);
-		EPWM_setTimeBaseCounter(reg_bases_[i], 0);
-		if (reg_bases_[i] == EPWM1_BASE)
+		EPWM_setTimeBasePeriod(module_bases_[i], period_);
+		EPWM_setPhaseShift(module_bases_[i], phase_[i]);
+		EPWM_setTimeBaseCounter(module_bases_[i], 0);
+		if (module_bases_[i] == EPWM1_BASE)
 		{
-			EPWM_setSyncOutPulseMode(reg_bases_[i], EPWM_SYNC_OUT_PULSE_ON_COUNTER_ZERO);	// module EPWM1 is master
+			EPWM_setSyncOutPulseMode(module_bases_[i], EPWM_SYNC_OUT_PULSE_ON_COUNTER_ZERO);	// module EPWM1 is master
 		}
 		else
 		{
-			EPWM_setSyncOutPulseMode(reg_bases_[i], EPWM_SYNC_OUT_PULSE_ON_EPWMxSYNCIN);	// module EPWM sync is pass-thru
+			EPWM_setSyncOutPulseMode(module_bases_[i], EPWM_SYNC_OUT_PULSE_ON_EPWMxSYNCIN);	// module EPWM sync is pass-thru
 		}
 
 	// Set compare values
-		EPWM_setCounterCompareValue(reg_bases_[i], EPWM_COUNTER_COMPARE_A, 0.5*period_);	// start with 50%
+		EPWM_setCounterCompareValue(module_bases_[i], EPWM_COUNTER_COMPARE_A, 0.5*period_);	// start with 50%
 
 	// Set up counter mode
-		EPWM_setTimeBaseCounterMode(reg_bases_[i], EPWM_COUNTER_MODE_UP_DOWN);
-		if (reg_bases_[i] == EPWM1_BASE)
+		EPWM_setTimeBaseCounterMode(module_bases_[i], EPWM_COUNTER_MODE_UP_DOWN);
+		if (module_bases_[i] == EPWM1_BASE)
 		{
-			EPWM_disablePhaseShiftLoad(reg_bases_[i]); //master has no phase shift
+			EPWM_disablePhaseShiftLoad(module_bases_[i]); //master has no phase shift
 		}
 		else
 		{
-			EPWM_enablePhaseShiftLoad(reg_bases_[i]);
+			EPWM_enablePhaseShiftLoad(module_bases_[i]);
 		}
-		EPWM_setClockPrescaler(reg_bases_[i], EPWM_CLOCK_DIVIDER_1, EPWM_HSCLOCK_DIVIDER_1);
+		EPWM_setClockPrescaler(module_bases_[i], EPWM_CLOCK_DIVIDER_1, EPWM_HSCLOCK_DIVIDER_1);
 
 	// Set up shadowing
-		EPWM_setCounterCompareShadowLoadMode(reg_bases_[i], EPWM_COUNTER_COMPARE_A, EPWM_COMP_LOAD_ON_CNTR_ZERO);
+		EPWM_setCounterCompareShadowLoadMode(module_bases_[i], EPWM_COUNTER_COMPARE_A, EPWM_COMP_LOAD_ON_CNTR_ZERO);
 
 	// Set actions
-		EPWM_setActionQualifierAction(reg_bases_[i],
+		EPWM_setActionQualifierAction(module_bases_[i],
 										EPWM_AQ_OUTPUT_A,
 										EPWM_AQ_OUTPUT_HIGH,
 										EPWM_AQ_OUTPUT_ON_TIMEBASE_DOWN_CMPA);
-		EPWM_setActionQualifierAction(reg_bases_[i],
+		EPWM_setActionQualifierAction(module_bases_[i],
 										EPWM_AQ_OUTPUT_A,
 										EPWM_AQ_OUTPUT_LOW,
 										EPWM_AQ_OUTPUT_ON_TIMEBASE_UP_CMPA);
-		EPWM_setActionQualifierAction(reg_bases_[i],
+		EPWM_setActionQualifierAction(module_bases_[i],
 										EPWM_AQ_OUTPUT_B,
 										EPWM_AQ_OUTPUT_HIGH,
 										EPWM_AQ_OUTPUT_ON_TIMEBASE_UP_CMPA);
-		EPWM_setActionQualifierAction(reg_bases_[i],
+		EPWM_setActionQualifierAction(module_bases_[i],
 										EPWM_AQ_OUTPUT_B,
 										EPWM_AQ_OUTPUT_LOW,
 										EPWM_AQ_OUTPUT_ON_TIMEBASE_DOWN_CMPA);
 
 	// Set Deadband Active High Complimentary
-		EPWM_setDeadBandControlShadowLoadMode(reg_bases_[i], EPWM_DB_LOAD_ON_CNTR_ZERO);
-		EPWM_setDeadBandDelayMode(reg_bases_[i], EPWM_DB_FED, true);
-		EPWM_setDeadBandDelayMode(reg_bases_[i], EPWM_DB_RED, true);
-		EPWM_setDeadBandDelayPolarity(reg_bases_[i], EPWM_DB_RED, EPWM_DB_POLARITY_ACTIVE_HIGH);
-		EPWM_setDeadBandDelayPolarity(reg_bases_[i], EPWM_DB_FED, EPWM_DB_POLARITY_ACTIVE_LOW);
-		EPWM_setRisingEdgeDeadBandDelayInput(reg_bases_[i], EPWM_DB_INPUT_EPWMA);
-		EPWM_setFallingEdgeDeadBandDelayInput(reg_bases_[i], EPWM_DB_INPUT_EPWMA);
-		EPWM_setRisingEdgeDelayCount(reg_bases_[i], dt_);
-		EPWM_setFallingEdgeDelayCount(reg_bases_[i], dt_);
-		EPWM_setDeadBandCounterClock(reg_bases_[i], EPWM_DB_COUNTER_CLOCK_FULL_CYCLE);
+		EPWM_setDeadBandControlShadowLoadMode(module_bases_[i], EPWM_DB_LOAD_ON_CNTR_ZERO);
+		EPWM_setDeadBandDelayMode(module_bases_[i], EPWM_DB_FED, true);
+		EPWM_setDeadBandDelayMode(module_bases_[i], EPWM_DB_RED, true);
+		EPWM_setDeadBandDelayPolarity(module_bases_[i], EPWM_DB_RED, EPWM_DB_POLARITY_ACTIVE_HIGH);
+		EPWM_setDeadBandDelayPolarity(module_bases_[i], EPWM_DB_FED, EPWM_DB_POLARITY_ACTIVE_LOW);
+		EPWM_setRisingEdgeDeadBandDelayInput(module_bases_[i], EPWM_DB_INPUT_EPWMA);
+		EPWM_setFallingEdgeDeadBandDelayInput(module_bases_[i], EPWM_DB_INPUT_EPWMA);
+		EPWM_setRisingEdgeDelayCount(module_bases_[i], dt_);
+		EPWM_setFallingEdgeDelayCount(module_bases_[i], dt_);
+		EPWM_setDeadBandCounterClock(module_bases_[i], EPWM_DB_COUNTER_CLOCK_FULL_CYCLE);
 
 	// Enable TZ1 as one shot trip sources
-		EPWM_enableTripZoneSignals(reg_bases_[i], EPWM_TZ_SIGNAL_OSHT1);
-		EPWM_setTripZoneAction(reg_bases_[i],
+		EPWM_enableTripZoneSignals(module_bases_[i], EPWM_TZ_SIGNAL_OSHT1);
+		EPWM_setTripZoneAction(module_bases_[i],
 								EPWM_TZ_ACTION_EVENT_TZA,
 								EPWM_TZ_ACTION_LOW);
-		EPWM_setTripZoneAction(reg_bases_[i],
+		EPWM_setTripZoneAction(module_bases_[i],
 								EPWM_TZ_ACTION_EVENT_TZB,
 								EPWM_TZ_ACTION_LOW);
 	}

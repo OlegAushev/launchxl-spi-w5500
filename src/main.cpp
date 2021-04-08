@@ -8,6 +8,7 @@
 #include <math.h>
 #include <profiler/profiler.h>
 #include <mcu/cpu_timers/cpu_timers_mcu.h>
+#include <mcu/spi/spi_mcu.h>
 
 mcu::Clock* h_clock = static_cast<mcu::Clock*>(NULL);
 
@@ -41,13 +42,17 @@ void main()
 	clock.SetFlagPeriod(mcu::TIMER_FLAG_4, 1000);
 	mcu::ConfigureSystick();
 
+	/* SPI */
+	mcu::Spi spia(mcu::SPIA, SPI_PROT_POL0PHA0, SPI_MODE_MASTER, 500000, 16);
+
 	/* INTERRUPTS */
 	EINT;	// Enable Global interrupt INTM
 	ERTM;	// Enable Global realtime interrupt
 
 	while (true)
 	{
-
+		spia.SendNonBlocking(0xA0F0);
+		DEVICE_DELAY_US(1000);
 	}
 }
 

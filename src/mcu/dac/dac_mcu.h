@@ -36,7 +36,7 @@ enum DacBModuleState
 class Dac
 {
 private:
-	static const uint32_t reg_bases_[2];
+	static const uint32_t module_bases_[2];
 	float is_configured_[2];
 	void Configure(DacModule dac);
 
@@ -47,7 +47,7 @@ public:
 	{
 		if (is_configured_[dac])
 		{
-			DAC_setShadowValue(reg_bases_[dac], value);
+			DAC_setShadowValue(module_bases_[dac], value);
 		}
 	}
 };
