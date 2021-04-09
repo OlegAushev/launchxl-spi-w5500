@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
 #include <stdint.h>
+#include <driverlib/inc/hw_types.h>
 
 /* Loopback test debug message printout enable */
 #define	_LOOPBACK_DEBUG_

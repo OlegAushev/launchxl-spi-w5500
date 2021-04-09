@@ -59,6 +59,7 @@ extern "C" {
 #endif
 
 #include <stdint.h>
+#include <driverlib/inc/hw_types.h>
 /**
  * @brief Select WIZCHIP.
  * @todo You should select one, \b W5100, \b W5100S, \b W5200, \b W5300, \b W5500 or etc. \n\n
@@ -233,7 +234,7 @@ extern "C" {
 typedef struct __WIZCHIP
 {
    uint16_t  if_mode;               ///< host interface mode
-   uint8_t   id[7];                 ///< @b WIZCHIP ID such as @b 5100, @b 5200, @b 5500, and so on.
+   char   id[7];                 ///< @b WIZCHIP ID such as @b 5100, @b 5200, @b 5500, and so on.
    /**
     * The set of critical section callback func.
     */

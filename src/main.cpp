@@ -9,9 +9,10 @@
 #include <profiler/profiler.h>
 #include <mcu/cpu_timers/cpu_timers_mcu.h>
 #include <mcu/spi/spi_mcu.h>
+#include <comm/controller_w5500/controller_w5500.h>
 
 mcu::Clock* h_clock = static_cast<mcu::Clock*>(NULL);
-uint8_t a = 0;
+
 /**
  * @brief main()
  * @param None
@@ -43,7 +44,7 @@ void main()
 	mcu::ConfigureSystick();
 
 	/* SPI */
-	mcu::Spi spia(mcu::SPIA, SPI_PROT_POL0PHA0, SPI_MODE_MASTER, 500000, 16);
+	SpiW5500 spia(mcu::SPIA, SPI_PROT_POL0PHA0, SPI_MODE_MASTER, 500000, 16);
 
 	/* INTERRUPTS */
 	EINT;	// Enable Global interrupt INTM

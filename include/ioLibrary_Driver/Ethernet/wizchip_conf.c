@@ -114,7 +114,7 @@ void 	wizchip_bus_writedata(uint32_t AddrSel, iodata_t wb)  { *((volatile iodata
  * null function is called.
  */
 //uint8_t wizchip_spi_readbyte(void)        {return 0;};
-uint8_t wizchip_spi_readbyte(void)        {return 0;}
+uint8_t wizchip_spi_readbyte(void);//        {return 0;}
 
 /**
  * @brief Default function to write in SPI interface.
@@ -122,7 +122,7 @@ uint8_t wizchip_spi_readbyte(void)        {return 0;}
  * null function is called.
  */
 //void 	wizchip_spi_writebyte(uint8_t wb) {};
-void 	wizchip_spi_writebyte(uint8_t wb) {}
+void 	wizchip_spi_writebyte(uint8_t wb);// {}
 
 /**
  * @brief Default function to burst read in SPI interface.
@@ -147,7 +147,7 @@ void 	wizchip_spi_writeburst(uint8_t* pBuf, uint16_t len) {}
 //M20150401 : For a compiler didnot support a member of structure
 //            Replace the assignment of struct members with the assingment of array
 //
-/*
+
 _WIZCHIP  WIZCHIP =
       {
       .id                  = _WIZCHIP_ID_,
@@ -156,12 +156,12 @@ _WIZCHIP  WIZCHIP =
       .CRIS._exit          = wizchip_cris_exit,
       .CS._select          = wizchip_cs_select,
       .CS._deselect        = wizchip_cs_deselect,
-      .IF.BUS._read_byte   = wizchip_bus_readbyte,
-      .IF.BUS._write_byte  = wizchip_bus_writebyte
-//    .IF.SPI._read_byte   = wizchip_spi_readbyte,
-//    .IF.SPI._write_byte  = wizchip_spi_writebyte
+//      .IF.BUS._read_byte   = wizchip_bus_readbyte,
+//      .IF.BUS._write_byte  = wizchip_bus_writebyte
+	  .IF.SPI._read_byte   = wizchip_spi_readbyte,
+	  .IF.SPI._write_byte  = wizchip_spi_writebyte
       };
-*/      
+/*
 _WIZCHIP  WIZCHIP =
 {
     _WIZCHIP_IO_MODE_,
@@ -185,7 +185,7 @@ _WIZCHIP  WIZCHIP =
 
     }
 };
-
+*/
 
 static uint8_t    _DNS_[4];      // DNS server ip address
 static dhcp_mode  _DHCP_;        // DHCP mode
