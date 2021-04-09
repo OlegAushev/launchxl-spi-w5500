@@ -11,7 +11,7 @@
 #include <mcu/spi/spi_mcu.h>
 
 mcu::Clock* h_clock = static_cast<mcu::Clock*>(NULL);
-
+uint8_t a = 0;
 /**
  * @brief main()
  * @param None
@@ -36,8 +36,8 @@ void main()
 	mcu::Clock clock(1, GPIO_CORE_CPU1, GPIO_CORE_CPU1);
 	h_clock = &clock;
 	clock.LedOff(mcu::LED_BLUE);
-	clock.SetFlagPeriod(mcu::TIMER_FLAG_1, 500);	// Temperature acquisition period
-	clock.SetFlagPeriod(mcu::TIMER_FLAG_2, 2);		// Sending via CAN period (DEBUG purpose)
+	clock.SetFlagPeriod(mcu::TIMER_FLAG_1, 500);
+	clock.SetFlagPeriod(mcu::TIMER_FLAG_2, 2);
 	clock.SetFlagPeriod(mcu::TIMER_FLAG_3, 100);
 	clock.SetFlagPeriod(mcu::TIMER_FLAG_4, 1000);
 	mcu::ConfigureSystick();
