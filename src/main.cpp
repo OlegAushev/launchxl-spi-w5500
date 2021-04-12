@@ -11,7 +11,6 @@
 #include <mcu/spi/spi_mcu.h>
 #include <comm/controller_w5500/controller_w5500.h>
 
-mcu::Clock* h_clock = static_cast<mcu::Clock*>(NULL);
 
 /**
  * @brief main()
@@ -35,7 +34,6 @@ void main()
 
 	/* CLOCK */
 	mcu::Clock clock(1, GPIO_CORE_CPU1, GPIO_CORE_CPU1);
-	h_clock = &clock;
 	clock.LedOff(mcu::LED_BLUE);
 	clock.SetFlagPeriod(mcu::TIMER_FLAG_1, 500);
 	clock.SetFlagPeriod(mcu::TIMER_FLAG_2, 2);

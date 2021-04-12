@@ -24,13 +24,11 @@
  */
 __interrupt void mcu::Clock::OnInterrupt()
 {
-	extern mcu::Clock* h_clock;
-
-	h_clock->Tick();
-	if (h_clock->IsFlagSet(mcu::TIMER_FLAG_1))
+	mcu::Clock::Instance()->Tick();
+	if (mcu::Clock::Instance()->IsFlagSet(mcu::TIMER_FLAG_1))
 	{
-		h_clock->LedToggle(mcu::LED_BLUE);
-		h_clock->LedToggle(mcu::LED_RED);
+		mcu::Clock::Instance()->LedToggle(mcu::LED_BLUE);
+		mcu::Clock::Instance()->LedToggle(mcu::LED_RED);
 	}
 
 	Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP1);
@@ -43,7 +41,5 @@ __interrupt void mcu::Clock::OnInterrupt()
  * @return None
  */
 __interrupt void mcu::SystickISR()
-{
-	extern mcu::Clock* h_clock;
-}
+{}
 
