@@ -44,6 +44,8 @@ struct CanMsg
 class Can
 {
 private:
+	static Can* instance_[2];
+
 	static const uint32_t module_bases_[2];
 	static const uint32_t tx_pins_[2];
 	static const uint32_t tx_pin_configs_[2];
@@ -57,8 +59,8 @@ private:
 	static CanMsg rx_msg_[32];
 
 public:
-	Can(CanModule can, CanBitrate bitrate);
-
+	Can(CanModule module, CanBitrate bitrate);
+	static Can* Instance(CanModule module) { return instance_[module]; }
 #ifdef CPU1
 	static void TransferControlToCpu2(CanModule can);
 #endif
@@ -76,6 +78,8 @@ public:
 
 	template<typename T>
 	T GetData(size_t msg_type);
+
+	static __interrupt void OnRxInterrupt();
 };
 
 /* ---------------- Template methods definitions ---------------- */

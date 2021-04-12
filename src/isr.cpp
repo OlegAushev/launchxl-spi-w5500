@@ -22,7 +22,7 @@
  * @param None
  * @return None
  */
-__interrupt void ISR_CPU_TIMER0_Clock()
+__interrupt void mcu::Clock::OnInterrupt()
 {
 	extern mcu::Clock* h_clock;
 
@@ -42,7 +42,7 @@ __interrupt void ISR_CPU_TIMER0_Clock()
  * @param None
  * @return None
  */
-__interrupt void ISR_CPU_TIMER1_Systick()
+__interrupt void mcu::SystickISR()
 {
 	extern mcu::Clock* h_clock;
 }

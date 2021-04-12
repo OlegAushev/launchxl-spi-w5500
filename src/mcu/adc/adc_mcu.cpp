@@ -7,18 +7,18 @@
 
 #include "adc_mcu.h"
 
-__interrupt void ISR_ADC_CurrentPhaseAB();
+/*__interrupt void ISR_ADC_CurrentPhaseAB();
 __interrupt void ISR_ADC_CurrentPhaseC();
 __interrupt void ISR_ADC_DcVoltage();
 
 __interrupt void ISR_ADC_TemperatureACCase();
-__interrupt void ISR_ADC_TemperatureC();
+__interrupt void ISR_ADC_TemperatureC();*/
 
 
 namespace mcu {
 
+Adc* Adc::instance_ = static_cast<Adc*>(NULL);
 const uint32_t Adc::module_bases_[3] = {ADCA_BASE, ADCB_BASE, ADCC_BASE};
-
 
 /**
  * @brief Configures ADC
@@ -27,6 +27,8 @@ const uint32_t Adc::module_bases_[3] = {ADCA_BASE, ADCB_BASE, ADCC_BASE};
  */
 Adc::Adc()
 {
+	Adc::instance_ = this;
+
 	for (uint32_t i = 0; i < 3; ++i)
 	{
 		ADC_setPrescaler(module_bases_[i], ADC_CLK_DIV_4_0);	// fclk(adc)max = 50 MHz
@@ -90,19 +92,19 @@ Adc::Adc()
 	ADC_setInterruptSource(ADCA_BASE, ADC_INT_NUMBER1, ADC_SOC_NUMBER7);
 	ADC_enableInterrupt(ADCA_BASE, ADC_INT_NUMBER1);
 	ADC_clearInterruptStatus(ADCA_BASE, ADC_INT_NUMBER1);
-	Interrupt_register(INT_ADCA1, ISR_ADC_CurrentPhaseAB);
+	Interrupt_register(INT_ADCA1, Adc::OnCurrent_AB_Interrupt);
 
 	// C-current interrupt - INT_ADCB1
 	ADC_setInterruptSource(ADCB_BASE, ADC_INT_NUMBER1, ADC_SOC_NUMBER3);
 	ADC_enableInterrupt(ADCB_BASE, ADC_INT_NUMBER1);
 	ADC_clearInterruptStatus(ADCB_BASE, ADC_INT_NUMBER1);
-	Interrupt_register(INT_ADCB1, ISR_ADC_CurrentPhaseC);
+	Interrupt_register(INT_ADCB1, Adc::OnCurrent_C_Interrupt);
 
 	// DC-voltage interrupt - INT_ADCC1
 	ADC_setInterruptSource(ADCC_BASE, ADC_INT_NUMBER1, ADC_SOC_NUMBER3);
 	ADC_enableInterrupt(ADCC_BASE, ADC_INT_NUMBER1);
 	ADC_clearInterruptStatus(ADCC_BASE, ADC_INT_NUMBER1);
-	Interrupt_register(INT_ADCC1, ISR_ADC_DcVoltage);
+	Interrupt_register(INT_ADCC1, Adc::OnVoltage_DC_Interrupt);
 
 	for (uint32_t i = 0; i < 3; ++i)
 	{
@@ -120,13 +122,13 @@ Adc::Adc()
 	ADC_setInterruptSource(ADCA_BASE, ADC_INT_NUMBER4, ADC_SOC_NUMBER15);
 	ADC_enableInterrupt(ADCA_BASE, ADC_INT_NUMBER4);
 	ADC_clearInterruptStatus(ADCA_BASE, ADC_INT_NUMBER4);
-	Interrupt_register(INT_ADCA4, ISR_ADC_TemperatureACCase);
+	Interrupt_register(INT_ADCA4, Adc::OnTemp_ACCase_Interrupt);
 
 	// B-temperature interrupt - INT_ADCA4
 	ADC_setInterruptSource(ADCC_BASE, ADC_INT_NUMBER4, ADC_SOC_NUMBER15);
 	ADC_enableInterrupt(ADCC_BASE, ADC_INT_NUMBER4);
 	ADC_clearInterruptStatus(ADCC_BASE, ADC_INT_NUMBER4);
-	Interrupt_register(INT_ADCC4, ISR_ADC_TemperatureC);
+	Interrupt_register(INT_ADCC4, Adc::OnTemp_B_Interrupt);
 }
 
 

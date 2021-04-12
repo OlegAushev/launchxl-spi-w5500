@@ -7,16 +7,13 @@
 
 #include "cpu_timers_mcu.h"
 
-/*
- * @brief CPU Timer 0 ISR prototype
- * @param None
- * @return None
- */
-__interrupt void ISR_CPU_TIMER0_Clock();
-__interrupt void ISR_CPU_TIMER1_Systick();
+//__interrupt void ISR_CPU_TIMER1_Systick();
+
 
 
 namespace mcu {
+
+Clock* Clock::instance_ = static_cast<Clock*>(NULL);
 
 #ifdef CPU1
 /**
@@ -31,7 +28,8 @@ Clock::Clock(uint32_t time_step_msec, GPIO_CoreSelect core1, GPIO_CoreSelect cor
 	, sec_(0)
 	, time_step_msec_(time_step_msec)
 {
-	Interrupt_register(INT_TIMER0, ISR_CPU_TIMER0_Clock);
+	Clock::instance_ = this;
+	Interrupt_register(INT_TIMER0, Clock::OnInterrupt);
 
 	CPUTimer_setPeriod(CPUTIMER0_BASE, 0xFFFFFFFF);	// Initialize timer period to maximum
 	CPUTimer_setPreScaler(CPUTIMER0_BASE, 0);		// Initialize pre-scale counter to divide by 1 (SYSCLKOUT)
@@ -75,7 +73,8 @@ Clock::Clock(uint32_t time_step_msec)
 	, sec_(0)
 	, time_step_msec_(time_step_msec)
 {
-	Interrupt_register(INT_TIMER0, ISR_CPU_TIMER0_Clock);
+	Clock::instance_ = this;
+	Interrupt_register(INT_TIMER0, Clock::OnInterrupt);
 
 	CPUTimer_setPeriod(CPUTIMER0_BASE, 0xFFFFFFFF);	// Initialize timer period to maximum
 	CPUTimer_setPreScaler(CPUTIMER0_BASE, 0);		// Initialize pre-scale counter to divide by 1 (SYSCLKOUT)
@@ -127,7 +126,7 @@ void Clock::SyncWithOtherCpu(uint32_t ipc_flag)
  */
 void ConfigureSystick()
 {
-    Interrupt_register(INT_TIMER1, ISR_CPU_TIMER1_Systick);
+    Interrupt_register(INT_TIMER1, SystickISR);
 
     CPUTimer_setPeriod(CPUTIMER1_BASE, 0xFFFFFFFF);  // Initialize timer period to maximum
     CPUTimer_setPreScaler(CPUTIMER1_BASE, 0);       // Initialize pre-scale counter to divide by 1 (SYSCLKOUT)

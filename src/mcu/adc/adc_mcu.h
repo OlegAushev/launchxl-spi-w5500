@@ -20,6 +20,7 @@ namespace mcu {
 class Adc
 {
 private:
+	static Adc* instance_;
 	static const uint32_t module_bases_[3];
 	float zero_current_values_[3];
 
@@ -28,6 +29,7 @@ private:
 
 public:
 	Adc();
+	static Adc* Instance() { return instance_; };
 	void Calibrate(uint32_t number_of_meas);
 	void EnableInterrupts() const;
 
@@ -138,6 +140,12 @@ public:
 	    result = 1.f / ((logf(3.3f/volt - 1.f)/3900)+(1.f/298.15f));
 	    return result;
 	}
+
+	static __interrupt void OnCurrent_AB_Interrupt();
+	static __interrupt void OnCurrent_C_Interrupt();
+	static __interrupt void OnVoltage_DC_Interrupt();
+	static __interrupt void OnTemp_ACCase_Interrupt();
+	static __interrupt void OnTemp_B_Interrupt();
 };
 
 } /* namespace uc */

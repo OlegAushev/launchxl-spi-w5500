@@ -158,8 +158,8 @@ Pwm::Pwm(uint16_t fund_freq, uint16_t sw_freq, uint16_t dt)
 	SysCtl_enablePeripheral(SYSCTL_PERIPH_CLK_TBCLKSYNC);	// Enable sync and clock to PWM
 
 	// Assign the interrupt service routines to ePWM interrupts
-	Interrupt_register(INT_EPWM1, &ISR_EPWM1);
-    Interrupt_register(INT_EPWM1_TZ, &ISR_EPWM_TZ);
+	Interrupt_register(INT_EPWM1, Pwm::OnInterrupt);
+    Interrupt_register(INT_EPWM1_TZ, Pwm::OnTripInterrupt);
 	Interrupt_enable(INT_EPWM1);
 	Interrupt_enable(INT_EPWM1_TZ);
 	this->Stop();

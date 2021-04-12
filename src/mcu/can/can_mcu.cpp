@@ -7,10 +7,10 @@
 #include "can_mcu.h"
 #include <comm/can/can_comm_msgs.h>
 
-__interrupt void ISR_CANA_RX();
 
 namespace mcu {
 
+Can* Can::instance_[2];
 const uint32_t Can::module_bases_[2] = {CANA_BASE, CANB_BASE};
 const uint32_t Can::tx_pins_[2] = {19, 12};
 const uint32_t Can::tx_pin_configs_[2] = {GPIO_19_CANTXA, GPIO_12_CANTXB};
@@ -38,12 +38,13 @@ void Can::TransferControlToCpu2(CanModule can)
  * @param can CAN module
  * @return None(constructor)
  */
-Can::Can(CanModule can, CanBitrate bitrate)
-	: module_base_(module_bases_[can])
+Can::Can(CanModule module, CanBitrate bitrate)
+	: module_base_(module_bases_[module])
 {
+	Can::instance_[module] = this;
 #ifdef CPU1
-	GPIO_setPinConfig(rx_pin_configs_[can]);
-	GPIO_setPinConfig(tx_pin_configs_[can]);
+	GPIO_setPinConfig(rx_pin_configs_[module]);
+	GPIO_setPinConfig(tx_pin_configs_[module]);
 #endif
 
 	CAN_initModule(module_base_);
@@ -77,7 +78,7 @@ Can::Can(CanModule can, CanBitrate bitrate)
 
 	if (module_base_ == CANA_BASE)
 	{
-		Interrupt_register(INT_CANA0, &ISR_CANA_RX);
+		Interrupt_register(INT_CANA0, Can::OnRxInterrupt);
 		CAN_enableInterrupt(module_base_, CAN_INT_IE0 | CAN_INT_ERROR | CAN_INT_STATUS);
 		Interrupt_enable(INT_CANA0);
 		CAN_enableGlobalInterrupt(module_base_, CAN_GLOBAL_INT_CANINT0);

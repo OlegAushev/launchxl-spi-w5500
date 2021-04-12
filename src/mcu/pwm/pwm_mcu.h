@@ -131,6 +131,8 @@ public:
 	}
 
 	bool IsStoppedBySofware() { return is_stopped_by_sw_; }
+	static __interrupt void OnInterrupt();
+	static __interrupt void OnTripInterrupt();
 };
 
 } /* namespace uc */

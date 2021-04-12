@@ -32,6 +32,7 @@ enum LaunchPadLed
 class Clock
 {
 private:
+	static Clock* instance_;
 	uint32_t msec_;
 	uint32_t sec_;
 	const uint32_t time_step_msec_;
@@ -49,6 +50,8 @@ public:
 #ifdef CPU2
 	Clock(uint32_t time_step_msec);
 #endif
+
+	static Clock* Instance() { return instance_; };
 
 	void Tick()
 	{
@@ -93,13 +96,15 @@ public:
 	}
 
 	void SyncWithOtherCpu(uint32_t ipc_flag);
+	static __interrupt void OnInterrupt();
 };
 
 
 void ConfigureSystick();
 inline uint32_t GetSystick() {return CPUTimer_getTimerCount(CPUTIMER1_BASE);}
+__interrupt void SystickISR();
 
-} /* namespace uc */
+} /* namespace mcu */
 
 
 #endif /* INCLUDE_UC_CPU_TIMERS_H_ */
