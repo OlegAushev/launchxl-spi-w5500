@@ -10,7 +10,10 @@
 #include <mcu/cpu_timers/cpu_timers_mcu.h>
 #include <mcu/spi/spi_mcu.h>
 #include <comm/controller_w5500/controller_w5500.h>
+#include "socket.h"
 
+void Foo() {}
+void Bar() {}
 
 /**
  * @brief main()
@@ -42,15 +45,20 @@ void main()
 	mcu::ConfigureSystick();
 
 	/* SPI */
-	SpiW5500 spia(mcu::SPIA, SPI_PROT_POL0PHA0, SPI_MODE_MASTER, 500000, 16);
+	SpiW5500 spia(mcu::SPIA, SPI_PROT_POL0PHA0, SPI_MODE_MASTER, 500000, 8);
 
 	/* INTERRUPTS */
 	EINT;	// Enable Global interrupt INTM
 	ERTM;	// Enable Global realtime interrupt
 
+	uint8_t buff[] = {0xAB, 0x12, 0x34, 0x78};
+
 	while (true)
 	{
-		spia.SendNonBlocking(0xA0F0);
+		//spia.SendNonBlocking(0xA0F0);
+		//spia.SendBlockingNonFifo(0xBCDE);
+		SpiW5500::WriteByte(0xAD);
+		//SpiW5500::WriteBuff(buff, 4);
 		DEVICE_DELAY_US(1000);
 	}
 }

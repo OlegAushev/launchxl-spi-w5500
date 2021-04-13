@@ -9,6 +9,8 @@
 #define SRC_COMM_CONTROLLER_W5500_CONTROLLER_W5500_H_
 
 #include <mcu/spi/spi_mcu.h>
+#include <ioLibrary_Driver/Ethernet/socket.h>
+
 
 class SpiW5500 : public mcu::Spi
 {
@@ -21,9 +23,9 @@ public:
 
 	static void WriteByte(uint8_t data);
 	static uint8_t ReadByte();
-
+	static void WriteBuff(uint8_t* p_buff, uint16_t len);
+	static void ReadBuff(uint8_t* p_buff, uint16_t len);
 };
-
 
 
 #endif /* SRC_COMM_CONTROLLER_W5500_CONTROLLER_W5500_H_ */

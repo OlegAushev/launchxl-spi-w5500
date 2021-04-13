@@ -67,8 +67,15 @@ void Spi::SendNonBlocking(uint16_t data)
 	SPI_writeDataNonBlocking(module_base_, data);
 }
 
-
-
+/*
+ * @brief
+ * @param
+ * @return
+ */
+void Spi::SendBlockingNonFifo(uint16_t data)
+{
+	SPI_writeDataBlockingNonFIFO(module_base_, data);
+}
 
 
 

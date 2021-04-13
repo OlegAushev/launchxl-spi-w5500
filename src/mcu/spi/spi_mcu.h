@@ -40,9 +40,10 @@ public:
 	Spi(SpiModule module, SPI_TransferProtocol protocol, SPI_Mode mode,
 		uint32_t bitrate, uint16_t data_width);
 
-	uint32_t GetBase() const { return module_bases_[module_base_]; }
+	uint32_t GetBase() const { return module_base_; }
 
 	void SendNonBlocking(uint16_t data);
+	void SendBlockingNonFifo(uint16_t data);
 };
 
 

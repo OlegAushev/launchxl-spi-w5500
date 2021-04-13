@@ -114,7 +114,7 @@ void 	wizchip_bus_writedata(uint32_t AddrSel, iodata_t wb)  { *((volatile iodata
  * null function is called.
  */
 //uint8_t wizchip_spi_readbyte(void)        {return 0;};
-uint8_t wizchip_spi_readbyte(void);//        {return 0;}
+uint8_t wizchip_spi_readbyte(void)        {return 0;}
 
 /**
  * @brief Default function to write in SPI interface.
@@ -122,7 +122,7 @@ uint8_t wizchip_spi_readbyte(void);//        {return 0;}
  * null function is called.
  */
 //void 	wizchip_spi_writebyte(uint8_t wb) {};
-void 	wizchip_spi_writebyte(uint8_t wb);// {}
+void 	wizchip_spi_writebyte(uint8_t wb) {}
 
 /**
  * @brief Default function to burst read in SPI interface.
