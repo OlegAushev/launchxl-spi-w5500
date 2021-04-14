@@ -16,11 +16,14 @@ class SpiW5500 : public mcu::Spi
 {
 private:
 	static uint32_t spi_base_;
+	static uint32_t cs_pin_;
 
 public:
 	SpiW5500(mcu::SpiModule module, SPI_TransferProtocol protocol, SPI_Mode mode,
-					uint32_t bitrate, uint16_t data_width);
+					uint32_t bitrate, uint16_t data_width, mcu::SpiTeMode te_mode);
 
+	static void ChipSelect();
+	static void ChipDeselect();
 	static void WriteByte(uint8_t data);
 	static uint8_t ReadByte();
 	static void WriteBuff(uint8_t* p_buff, uint16_t len);

@@ -45,7 +45,7 @@ void main()
 	mcu::ConfigureSystick();
 
 	/* SPI */
-	SpiW5500 spia(mcu::SPIA, SPI_PROT_POL0PHA0, SPI_MODE_MASTER, 500000, 8);
+	SpiW5500 spia(mcu::SPIA, SPI_PROT_POL0PHA0, SPI_MODE_MASTER, 500000, 8, mcu::SPI_TE_SW);
 
 	/* INTERRUPTS */
 	EINT;	// Enable Global interrupt INTM
@@ -57,7 +57,7 @@ void main()
 	{
 		//spia.SendNonBlocking(0xA0F0);
 		//spia.SendBlockingNonFifo(0xBCDE);
-		SpiW5500::WriteByte(0xAD);
+		//SpiW5500::WriteByte(0xAD);
 		//SpiW5500::WriteBuff(buff, 4);
 		DEVICE_DELAY_US(1000);
 	}
