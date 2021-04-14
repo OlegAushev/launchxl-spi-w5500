@@ -32,6 +32,7 @@ Spi::Spi(SpiModule module, SPI_TransferProtocol protocol, SPI_Mode mode,
 			uint32_t bitrate, uint16_t data_width, SpiTeMode te_mode)
 	: module_(module)
 	, module_base_(module_bases_[module])
+	, data_width_(data_width)
 {
 	SPI_disableModule(module_base_);
 	SPI_setConfig(module_base_, DEVICE_LSPCLK_FREQ, protocol, mode, bitrate, data_width);
@@ -69,28 +70,11 @@ Spi::Spi(SpiModule module, SPI_TransferProtocol protocol, SPI_Mode mode,
 
 
 #endif
+	SPI_enableFIFO(module_base_);
 	SPI_enableModule(module_base_);
 }
 
-/*
- * @brief
- * @param
- * @return
- */
-void Spi::SendNonBlocking(uint16_t data)
-{
-	SPI_writeDataNonBlocking(module_base_, data);
-}
 
-/*
- * @brief
- * @param
- * @return
- */
-void Spi::SendBlockingNonFifo(uint16_t data)
-{
-	SPI_writeDataBlockingNonFIFO(module_base_, data);
-}
 
 
 

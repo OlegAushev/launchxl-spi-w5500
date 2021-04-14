@@ -55,10 +55,10 @@ void main()
 
 	while (true)
 	{
-		//spia.SendNonBlocking(0xA0F0);
-		//spia.SendBlockingNonFifo(0xBCDE);
-		//SpiW5500::WriteByte(0xAD);
-		//SpiW5500::WriteBuff(buff, 4);
+		spia.SendBlockingFifo(0x16);
+		spia.WriteBuff(buff, 4);
+
+
 		DEVICE_DELAY_US(1000);
 	}
 }

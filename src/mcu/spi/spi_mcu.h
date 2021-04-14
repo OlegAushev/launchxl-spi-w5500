@@ -44,6 +44,7 @@ private:
 
 	const SpiModule module_;
 	const uint32_t module_base_;
+	const uint16_t data_width_;
 public:
 	Spi(SpiModule module, SPI_TransferProtocol protocol, SPI_Mode mode,
 		uint32_t bitrate, uint16_t data_width, SpiTeMode te_mode);
@@ -51,8 +52,35 @@ public:
 	uint32_t GetBase() const { return module_bases_[module_]; }
 	uint32_t GetTePin() const { return te_pins_[module_]; }
 
-	void SendNonBlocking(uint16_t data);
-	void SendBlockingNonFifo(uint16_t data);
+	/*
+	 * @brief
+	 * @param
+	 * @return
+	 */
+	void SendNonBlocking(uint16_t data)
+	{
+		SPI_writeDataNonBlocking(module_base_, data << (16 - data_width_));
+	}
+
+	/*
+	 * @brief
+	 * @param
+	 * @return
+	 */
+	void SendBlockingNonFifo(uint16_t data)
+	{
+		SPI_writeDataBlockingNonFIFO(module_base_, data << (16 - data_width_));
+	}
+
+	/*
+	 * @brief
+	 * @param
+	 * @return
+	 */
+	void SendBlockingFifo(uint16_t data)
+	{
+		SPI_writeDataBlockingFIFO(module_base_, data << (16 - data_width_));
+	}
 };
 
 
