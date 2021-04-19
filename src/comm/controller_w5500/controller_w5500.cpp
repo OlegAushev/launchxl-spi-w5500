@@ -84,10 +84,10 @@ void SpiW5500::WriteByte(uint8_t data)
  */
 uint8_t SpiW5500::ReadByte()
 {
+	DEVICE_DELAY_US(1000);
 	SPI_writeDataBlockingNonFIFO(SpiW5500::spi_base_, 0xAAAA);
-	DEVICE_DELAY_US(10000);
+	DEVICE_DELAY_US(1000);
 	return SPI_readDataBlockingNonFIFO(SpiW5500::spi_base_) & 0x00FF;
-	DEVICE_DELAY_US(10000);
 }
 
 /**
