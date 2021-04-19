@@ -13,6 +13,12 @@ void reg_wizchip_cs_cbfunc(void(*cs_sel)(void), void(*cs_desel)(void));
 void reg_wizchip_spi_cbfunc(uint8_t (*spi_rb)(void), void (*spi_wb)(uint8_t wb));
 void reg_wizchip_spiburst_cbfunc(void (*spi_rb)(uint8_t* pBuf, uint16_t len), void (*spi_wb)(uint8_t* pBuf, uint16_t len));
 
+wiz_NetInfo gWIZNETINFO = { .mac = {0x00, 0x08, 0xdc, 0xab, 0xcd, 0xff},
+                            .ip = {192, 168, 70, 250},
+                            .sn = {255, 255, 255, 0},
+                            .gw = {192, 168, 70, 1},
+                            .dns = {0, 0, 0, 0},
+                            .dhcp = NETINFO_STATIC };
 
 /**
  * @brief Configures W5500
@@ -26,21 +32,18 @@ SpiW5500::SpiW5500(mcu::SpiModule module, SPI_TransferProtocol protocol, SPI_Mod
 	SpiW5500::spi_base_ = this->GetBase();
 	SpiW5500::cs_pin_ = this->GetTePin();
 
-	wiz_NetInfo gWIZNETINFO = { .mac = {0x00, 0x08, 0xdc, 0xab, 0xcd, 0xef},
-	                            .ip = {192, 168, 70, 250},
-	                            .sn = {255, 255, 255, 0},
-	                            .gw = {192, 168, 70, 1},
-	                            .dns = {0, 0, 0, 0},
-	                            .dhcp = NETINFO_STATIC };
-
 	reg_wizchip_cs_cbfunc(SpiW5500::ChipSelect, SpiW5500::ChipDeselect);
 	reg_wizchip_spi_cbfunc(SpiW5500::ReadByte, SpiW5500::WriteByte);
-	reg_wizchip_spiburst_cbfunc(SpiW5500::ReadBuff, SpiW5500::WriteBuff);
+	//reg_wizchip_spiburst_cbfunc(SpiW5500::ReadBuff, SpiW5500::WriteBuff);
 
 	uint8_t rx_tx_buff_sizes[] = {2, 2, 2, 2, 2, 2, 2, 2};
 	wizchip_init(rx_tx_buff_sizes, rx_tx_buff_sizes);
 	wizchip_setnetinfo(&gWIZNETINFO);
 	ctlnetwork(CN_SET_NETINFO, (void*) &gWIZNETINFO);
+	DEVICE_DELAY_US(1E6);
+	wiz_NetInfo foo;
+	wizchip_getnetinfo(&foo);
+
 }
 
 /**
@@ -70,7 +73,8 @@ void SpiW5500::ChipDeselect()
  */
 void SpiW5500::WriteByte(uint8_t data)
 {
-	SPI_writeDataBlockingFIFO(SpiW5500::spi_base_, data << 8);
+
+	SPI_writeDataBlockingNonFIFO(SpiW5500::spi_base_, data << 8);
 }
 
 /**
@@ -80,7 +84,10 @@ void SpiW5500::WriteByte(uint8_t data)
  */
 uint8_t SpiW5500::ReadByte()
 {
-	return SPI_readDataBlockingFIFO(SpiW5500::spi_base_) & 0x00FF;
+	SPI_writeDataBlockingNonFIFO(SpiW5500::spi_base_, 0xAAAA);
+	DEVICE_DELAY_US(10000);
+	return SPI_readDataBlockingNonFIFO(SpiW5500::spi_base_) & 0x00FF;
+	DEVICE_DELAY_US(10000);
 }
 
 /**
@@ -103,6 +110,13 @@ void SpiW5500::WriteBuff(uint8_t* p_buff, uint16_t len)
  */
 void SpiW5500::ReadBuff(uint8_t* p_buff, uint16_t len)
 {
+	while (SPI_isBusy(SpiW5500::spi_base_)) {}
+	SPI_resetRxFIFO(SpiW5500::spi_base_);
+	for (size_t i = 0; i < len; ++i)
+	{
+		SPI_writeDataBlockingFIFO(SpiW5500::spi_base_, 0xAAAA);
+	}
+
 	for (size_t i = 0; i < len; ++i)
 	{
 		p_buff[i] = SPI_readDataBlockingFIFO(SpiW5500::spi_base_) & 0x00FF;

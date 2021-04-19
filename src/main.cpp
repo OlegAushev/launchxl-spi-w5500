@@ -12,8 +12,6 @@
 #include <comm/controller_w5500/controller_w5500.h>
 #include "socket.h"
 
-void Foo() {}
-void Bar() {}
 
 /**
  * @brief main()
@@ -45,20 +43,20 @@ void main()
 	mcu::ConfigureSystick();
 
 	/* SPI */
-	SpiW5500 spia(mcu::SPIA, SPI_PROT_POL0PHA0, SPI_MODE_MASTER, 500000, 8, mcu::SPI_TE_SW);
-
+	SpiW5500 spia(mcu::SPIA, SPI_PROT_POL0PHA1, SPI_MODE_MASTER, 6250000, 8, mcu::SPI_TE_SW);
 	/* INTERRUPTS */
 	EINT;	// Enable Global interrupt INTM
 	ERTM;	// Enable Global realtime interrupt
 
-	uint8_t buff[] = {0xAB, 0x12, 0x34, 0x78};
+	//uint8_t buff[] = {0xAB, 0x12, 0x34, 0x78};
+	//uint8_t buff_rec[4];
 
 	while (true)
 	{
-		spia.SendBlockingFifo(0x16);
-		spia.WriteBuff(buff, 4);
-
-
+		//SpiW5500::WriteBuff(buff, 4);
+		//SpiW5500::ReadBuff(buff_rec, 4);
+		//SpiW5500::WriteByte(0x23);
+		//uint16_t res = SpiW5500::ReadByte();
 		DEVICE_DELAY_US(1000);
 	}
 }
