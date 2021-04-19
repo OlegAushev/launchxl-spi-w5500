@@ -34,7 +34,7 @@ SpiW5500::SpiW5500(mcu::SpiModule module, SPI_TransferProtocol protocol, SPI_Mod
 
 	reg_wizchip_cs_cbfunc(SpiW5500::ChipSelect, SpiW5500::ChipDeselect);
 	reg_wizchip_spi_cbfunc(SpiW5500::ReadByte, SpiW5500::WriteByte);
-	//reg_wizchip_spiburst_cbfunc(SpiW5500::ReadBuff, SpiW5500::WriteBuff);
+	reg_wizchip_spiburst_cbfunc(SpiW5500::ReadBuff, SpiW5500::WriteBuff);
 
 	uint8_t rx_tx_buff_sizes[] = {2, 2, 2, 2, 2, 2, 2, 2};
 	wizchip_init(rx_tx_buff_sizes, rx_tx_buff_sizes);
@@ -75,7 +75,7 @@ void SpiW5500::WriteByte(uint8_t data)
 {
 
 	SPI_writeDataBlockingFIFO(SpiW5500::spi_base_, data << 8);
-	SPI_readDataBlockingFIFO(SpiW5500::spi_base_);
+	SPI_readDataBlockingFIFO(SpiW5500::spi_base_);	// clear FIFO
 }
 
 /**
@@ -85,7 +85,7 @@ void SpiW5500::WriteByte(uint8_t data)
  */
 uint8_t SpiW5500::ReadByte()
 {
-	SPI_writeDataBlockingFIFO(SpiW5500::spi_base_, 0xAAAA);
+	SPI_writeDataBlockingFIFO(SpiW5500::spi_base_, 0xAAAA);	// send dummy data on TX line and generate clock on CLK line
 	return SPI_readDataBlockingFIFO(SpiW5500::spi_base_) & 0x00FF;
 }
 
@@ -99,6 +99,7 @@ void SpiW5500::WriteBuff(uint8_t* p_buff, uint16_t len)
 	for (size_t i = 0; i < len; ++i)
 	{
 		SPI_writeDataBlockingFIFO(SpiW5500::spi_base_, p_buff[i] << 8);
+		SPI_readDataBlockingFIFO(SpiW5500::spi_base_);	// clear FIFO
 	}
 }
 
@@ -109,17 +110,25 @@ void SpiW5500::WriteBuff(uint8_t* p_buff, uint16_t len)
  */
 void SpiW5500::ReadBuff(uint8_t* p_buff, uint16_t len)
 {
-	while (SPI_isBusy(SpiW5500::spi_base_)) {}
-	SPI_resetRxFIFO(SpiW5500::spi_base_);
-	for (size_t i = 0; i < len; ++i)
+	if (len <= 16)
 	{
-		SPI_writeDataBlockingFIFO(SpiW5500::spi_base_, 0xAAAA);
+		for (size_t i = 0; i < len; ++i)
+		{
+			SPI_writeDataBlockingFIFO(SpiW5500::spi_base_, 0xAAAA);	// send dummy data on TX line and generate clock on CLK line
+		}
+		for (size_t i = 0; i < len; ++i)
+		{
+			p_buff[i] = SPI_readDataBlockingFIFO(SpiW5500::spi_base_) & 0x00FF;
+		}
+	}
+	else
+	{
+		for (size_t i = 0; i < len; ++i)
+		{
+			p_buff[i] = SpiW5500::ReadByte();
+		}
 	}
 
-	for (size_t i = 0; i < len; ++i)
-	{
-		p_buff[i] = SPI_readDataBlockingFIFO(SpiW5500::spi_base_) & 0x00FF;
-	}
 }
 
 
