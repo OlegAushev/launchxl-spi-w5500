@@ -70,7 +70,7 @@ Spi::Spi(SpiModule module, SPI_TransferProtocol protocol, SPI_Mode mode,
 
 
 #endif
-	SPI_disableFIFO(module_base_);
+	SPI_enableFIFO(module_base_);
 	SPI_enableModule(module_base_);
 	SPI_enableTalk(module_base_);
 }

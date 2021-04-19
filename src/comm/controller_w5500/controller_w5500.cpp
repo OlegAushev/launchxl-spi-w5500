@@ -74,7 +74,8 @@ void SpiW5500::ChipDeselect()
 void SpiW5500::WriteByte(uint8_t data)
 {
 
-	SPI_writeDataBlockingNonFIFO(SpiW5500::spi_base_, data << 8);
+	SPI_writeDataBlockingFIFO(SpiW5500::spi_base_, data << 8);
+	SPI_readDataBlockingFIFO(SpiW5500::spi_base_);
 }
 
 /**
@@ -84,10 +85,8 @@ void SpiW5500::WriteByte(uint8_t data)
  */
 uint8_t SpiW5500::ReadByte()
 {
-	DEVICE_DELAY_US(1000);
-	SPI_writeDataBlockingNonFIFO(SpiW5500::spi_base_, 0xAAAA);
-	DEVICE_DELAY_US(1000);
-	return SPI_readDataBlockingNonFIFO(SpiW5500::spi_base_) & 0x00FF;
+	SPI_writeDataBlockingFIFO(SpiW5500::spi_base_, 0xAAAA);
+	return SPI_readDataBlockingFIFO(SpiW5500::spi_base_) & 0x00FF;
 }
 
 /**
