@@ -76,10 +76,15 @@ void main()
 
 	while (true)
 	{
-		DEVICE_DELAY_US(1000);
+		DEVICE_DELAY_US(1E6);
 		char message_tx[128];
-		sprintf(message_tx, "Current time is %lu%s%lu%s", clock.GetSec(), ".", clock.GetMilliSec(), "s\n");
+		sprintf(message_tx, "Current time is %lu.%lu\n", clock.GetSec(), clock.GetMilliSec());
 		w5500.Send((uint8_t*)message_tx, strlen(message_tx));
+
+		char message_rx[128] = {0};
+		recvfrom(SOCKET_RX, (uint8_t*)message_rx, 128, NULL, &udp_settings.port_rx);
+		w5500.Send((uint8_t*)message_rx, strlen(message_rx));
+
 	}
 }
 
