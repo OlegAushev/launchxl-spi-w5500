@@ -11,7 +11,7 @@
 #include <mcu/spi/spi_mcu.h>
 #include <comm/controller_w5500/controller_w5500.h>
 #include "socket.h"
-
+#include "stdio.h"
 
 /**
  * @brief main()
@@ -48,16 +48,20 @@ void main()
 	EINT;	// Enable Global interrupt INTM
 	ERTM;	// Enable Global realtime interrupt
 
-	//uint8_t buff[] = {0xAB, 0x12, 0x34, 0x78};
-	//uint8_t buff_rec[4];
+	int8_t socket_in = socket(0, Sn_MR_UDP, 3000, 0);
+	int8_t socket_out = socket(1, Sn_MR_UDP, 3001, 0);
+	printf("Hi!\n");
+
+
 
 	while (true)
 	{
-		//SpiW5500::WriteBuff(buff, 4);
-		//SpiW5500::ReadBuff(buff_rec, 4);
-		//SpiW5500::WriteByte(0x23);
-		//uint16_t res = SpiW5500::ReadByte();
 		DEVICE_DELAY_US(1000);
+		//send(1, (uint8_t*)"Hi from TI!\n", strlen("Hi from TI!\n"));
+		uint8_t addr[4] = {192,168,70,241};
+		char message[128];
+		sprintf(message, "Current time is %lu%s%lu%s", clock.GetSec(), ".", clock.GetMilliSec(), "\n");
+		sendto(1, (uint8_t*)message, strlen(message), addr, 3001);
 	}
 }
 

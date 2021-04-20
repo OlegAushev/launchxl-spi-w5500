@@ -39,11 +39,6 @@ SpiW5500::SpiW5500(mcu::SpiModule module, SPI_TransferProtocol protocol, SPI_Mod
 	uint8_t rx_tx_buff_sizes[] = {2, 2, 2, 2, 2, 2, 2, 2};
 	wizchip_init(rx_tx_buff_sizes, rx_tx_buff_sizes);
 	wizchip_setnetinfo(&gWIZNETINFO);
-	ctlnetwork(CN_SET_NETINFO, (void*) &gWIZNETINFO);
-	DEVICE_DELAY_US(1E6);
-	wiz_NetInfo foo;
-	wizchip_getnetinfo(&foo);
-
 }
 
 /**
