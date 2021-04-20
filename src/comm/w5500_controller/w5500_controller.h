@@ -11,16 +11,22 @@
 #include <mcu/spi/spi_mcu.h>
 #include <ioLibrary_Driver/Ethernet/socket.h>
 
+struct W5500_UdpSettings
+{
+	uint8_t socket_rx;
+	uint16_t port_rx;
+	uint8_t socket_tx;
+	uint16_t port_tx;
+	uint8_t ip_tx[4];
+};
 
-class SpiW5500 : public mcu::Spi
+class W5500_Controller
 {
 private:
+	mcu::Spi spi_;
 	static uint32_t spi_base_;
 	static uint32_t cs_pin_;
-
-public:
-	SpiW5500(mcu::SpiModule module, SPI_TransferProtocol protocol, SPI_Mode mode,
-					uint32_t bitrate, uint16_t data_width, mcu::SpiTeMode te_mode);
+	W5500_UdpSettings udp_;
 
 	static void ChipSelect();
 	static void ChipDeselect();
@@ -28,6 +34,13 @@ public:
 	static uint8_t ReadByte();
 	static void WriteBuff(uint8_t* p_buff, uint16_t len);
 	static void ReadBuff(uint8_t* p_buff, uint16_t len);
+
+public:
+	W5500_Controller(mcu::SpiModule module, SPI_TransferProtocol protocol, SPI_Mode mode,
+					uint32_t bitrate, uint16_t data_width, mcu::SpiTeMode te_mode,
+					wiz_NetInfo* netinfo, W5500_UdpSettings udp_settings);
+
+	int32_t Send(uint8_t* buff, uint16_t len);
 };
 
 

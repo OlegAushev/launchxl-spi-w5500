@@ -91,7 +91,7 @@ Can::Can(CanModule module, CanBitrate bitrate)
  * @param
  * @return
  */
-bool Can::Receive(size_t msg_type)
+bool Can::Recv(size_t msg_type)
 {
 	if (CAN_readMessage(module_base_, rx_msg_[msg_type].obj_id, rx_msg_[msg_type].data))
 	{

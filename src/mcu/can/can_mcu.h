@@ -71,7 +71,7 @@ public:
 	template <typename T>
 	void Send(size_t msg_type, T data);
 
-	bool Receive(size_t msg_type);
+	bool Recv(size_t msg_type);
 
 	template<typename T, uint32_t data_size>
 	void GetDataToArray(size_t msg_type, SimpleArray<T, data_size>& data);

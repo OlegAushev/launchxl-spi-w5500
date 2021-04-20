@@ -9,9 +9,34 @@
 #include <profiler/profiler.h>
 #include <mcu/cpu_timers/cpu_timers_mcu.h>
 #include <mcu/spi/spi_mcu.h>
-#include <comm/controller_w5500/controller_w5500.h>
+#include <comm/w5500_controller/w5500_controller.h>
 #include "socket.h"
 #include "stdio.h"
+
+#define SOCKET_RX	0
+#define PORT_RX 	3000
+#define SOCKET_TX 	1
+#define PORT_TX 	3001
+
+#define EDGE_IP		{192, 168, 70, 241}
+#define W5500_IP	{192, 168, 70, 251}
+#define W5500_GW	{192, 168, 70, 1}
+
+wiz_NetInfo wiz_netinfo = {
+		.mac = {0x00, 0x08, 0xdc, 0xab, 0xcd, 0xfe},
+		.ip = W5500_IP,
+		.sn = {255, 255, 255, 0},
+		.gw = W5500_GW,
+		.dns = {0, 0, 0, 0},
+		.dhcp = NETINFO_STATIC };
+
+W5500_UdpSettings udp_settings = {
+		.socket_rx = SOCKET_RX,
+		.port_rx = PORT_RX,
+		.socket_tx = SOCKET_TX,
+		.port_tx = PORT_TX,
+		.ip_tx = EDGE_IP
+};
 
 /**
  * @brief main()
@@ -43,25 +68,18 @@ void main()
 	mcu::ConfigureSystick();
 
 	/* SPI */
-	SpiW5500 spia(mcu::SPIA, SPI_PROT_POL0PHA1, SPI_MODE_MASTER, 6250000, 8, mcu::SPI_TE_SW);
+	W5500_Controller w5500(mcu::SPIA, SPI_PROT_POL0PHA1, SPI_MODE_MASTER, 6250000, 8, mcu::SPI_TE_SW,
+			&wiz_netinfo, udp_settings);
 	/* INTERRUPTS */
 	EINT;	// Enable Global interrupt INTM
 	ERTM;	// Enable Global realtime interrupt
 
-	int8_t socket_in = socket(0, Sn_MR_UDP, 3000, 0);
-	int8_t socket_out = socket(1, Sn_MR_UDP, 3001, 0);
-	printf("Hi!\n");
-
-
-
 	while (true)
 	{
 		DEVICE_DELAY_US(1000);
-		//send(1, (uint8_t*)"Hi from TI!\n", strlen("Hi from TI!\n"));
-		uint8_t addr[4] = {192,168,70,241};
-		char message[128];
-		sprintf(message, "Current time is %lu%s%lu%s", clock.GetSec(), ".", clock.GetMilliSec(), "\n");
-		sendto(1, (uint8_t*)message, strlen(message), addr, 3001);
+		char message_tx[128];
+		sprintf(message_tx, "Current time is %lu%s%lu%s", clock.GetSec(), ".", clock.GetMilliSec(), "s\n");
+		w5500.Send((uint8_t*)message_tx, strlen(message_tx));
 	}
 }
 
