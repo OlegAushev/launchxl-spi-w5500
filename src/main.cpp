@@ -6,6 +6,7 @@
 #include "F2837xD_Ipc_drivers.h"
 #include "device.h"
 #include <math.h>
+#include <common.h>
 #include <profiler/profiler.h>
 #include <mcu/cpu_timers/cpu_timers_mcu.h>
 #include <mcu/spi/spi_mcu.h>
@@ -77,14 +78,37 @@ void main()
 	while (true)
 	{
 		DEVICE_DELAY_US(1E6);
+		SimpleArray<float, 2> arr;
+        arr[0] = 3.1416;
+        arr[1] = 617.617;
+		char buff[1024];
+
+		for (int i = 0; i < 2; ++i)
+		{
+		    uint16_t bl[2];
+		    memcpy(&bl, &arr[i], 2);
+		    char c[4];
+		    c[3] = (bl[1] >> 8) & 0x00FF;
+		    c[2] = bl[1] & 0x00FF;
+		    c[1] = (bl[0] >> 8) & 0x00FF;
+		    c[0] = bl[0] & 0x00FF;
+		    for (int j = 0; j < 4; ++j)
+		    {
+		        buff[4*i+j] = c[j];
+		    }
+		}
+
+		w5500.Send((uint8_t*)buff, arr.size()*4);
+/*
 		char message_tx[128];
 		sprintf(message_tx, "Current time is %lu.%lu\n", clock.GetSec(), clock.GetMilliSec());
 		w5500.Send((uint8_t*)message_tx, strlen(message_tx));
-
+*/
+/*
 		char message_rx[128] = {0};
 		recvfrom(SOCKET_RX, (uint8_t*)message_rx, 128, NULL, &udp_settings.port_rx);
 		w5500.Send((uint8_t*)message_rx, strlen(message_rx));
-
+*/
 	}
 }
 

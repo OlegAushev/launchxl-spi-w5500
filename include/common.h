@@ -61,6 +61,7 @@ public:
 	const T& operator[] (uint32_t i) const {return data_[i];}
 	uint32_t size() const {return n;}
 	const T* data() const {return data_;}
+	T* data() { return data_; }
 };
 
 
