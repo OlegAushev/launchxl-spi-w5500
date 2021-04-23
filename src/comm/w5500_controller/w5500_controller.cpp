@@ -7,6 +7,7 @@
 
 #include <comm/w5500_controller/w5500_controller.h>
 
+uint8_t W5500_Controller::buff_[W5500_MAX_DATA_SIZE];
 uint32_t W5500_Controller::spi_base_;
 uint32_t W5500_Controller::cs_pin_;
 void reg_wizchip_cs_cbfunc(void(*cs_sel)(void), void(*cs_desel)(void));
@@ -37,6 +38,11 @@ W5500_Controller::W5500_Controller(mcu::SpiModule module, SPI_TransferProtocol p
 
 	int8_t socket_in = socket(udp_.socket_rx, Sn_MR_UDP, udp_.port_rx, 0);
 	int8_t socket_out = socket(udp_.socket_tx, Sn_MR_UDP, udp_.port_tx, 0);
+
+	for (size_t i = 0; i < W5500_MAX_DATA_SIZE; ++i)
+	{
+		buff_[i] = 0xAA;
+	}
 }
 
 /**
@@ -46,6 +52,10 @@ W5500_Controller::W5500_Controller(mcu::SpiModule module, SPI_TransferProtocol p
  */
 int32_t W5500_Controller::Send(uint8_t* buff, uint16_t len)
 {
+    if (len > W5500_MAX_DATA_SIZE)
+    {
+        return SOCKERR_DATALEN;
+    }
 	return sendto(udp_.socket_tx, buff, len, udp_.ip_tx, udp_.port_tx);
 }
 

@@ -39,6 +39,8 @@ W5500_UdpSettings udp_settings = {
 		.ip_tx = EDGE_IP
 };
 
+SimpleArray<float, W5500_MAX_DATA_SIZE/4> big_data;
+
 /**
  * @brief main()
  * @param None
@@ -55,9 +57,9 @@ void main()
 	ConfigureLogPin(67, GPIO_CORE_CPU1);
 
 	Interrupt_initModule();			// Initializes PIE and clear PIE registers. Disables CPU interrupts.
-    								// Clears all CPU interrupt flags.
+	// Clears all CPU interrupt flags.
 	Interrupt_initVectorTable();	// Initialize the PIE vector table with pointers to the shell interrupt
-    								// Service Routines (ISR).
+	// Service Routines (ISR).
 
 	/* CLOCK */
 	mcu::Clock clock(1, GPIO_CORE_CPU1, GPIO_CORE_CPU1);
@@ -78,37 +80,23 @@ void main()
 	while (true)
 	{
 		DEVICE_DELAY_US(1E6);
-		SimpleArray<float, 2> arr;
-        arr[0] = 3.1416;
-        arr[1] = 617.617;
-		char buff[1024];
 
-		for (int i = 0; i < 2; ++i)
+		for (size_t i = 0; i < W5500_MAX_DATA_SIZE/4; ++i)
 		{
-		    uint16_t bl[2];
-		    memcpy(&bl, &arr[i], 2);
-		    char c[4];
-		    c[3] = (bl[1] >> 8) & 0x00FF;
-		    c[2] = bl[1] & 0x00FF;
-		    c[1] = (bl[0] >> 8) & 0x00FF;
-		    c[0] = bl[0] & 0x00FF;
-		    for (int j = 0; j < 4; ++j)
-		    {
-		        buff[4*i+j] = c[j];
-		    }
+			big_data[i] = 100 * sinf(2 * MATH_PI * i / (W5500_MAX_DATA_SIZE/4));
 		}
+		w5500.Send(big_data);
 
-		w5500.Send((uint8_t*)buff, arr.size()*4);
-/*
+		/*
 		char message_tx[128];
 		sprintf(message_tx, "Current time is %lu.%lu\n", clock.GetSec(), clock.GetMilliSec());
 		w5500.Send((uint8_t*)message_tx, strlen(message_tx));
-*/
-/*
+		 */
+		/*
 		char message_rx[128] = {0};
 		recvfrom(SOCKET_RX, (uint8_t*)message_rx, 128, NULL, &udp_settings.port_rx);
 		w5500.Send((uint8_t*)message_rx, strlen(message_rx));
-*/
+		 */
 	}
 }
 

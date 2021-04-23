@@ -110,7 +110,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/mcu/can|2837xD_RAM_lnk_cpu1.cmd|include/ioLibrary_Driver/Internet" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="2837xD_RAM_lnk_cpu1.cmd|include/ioLibrary_Driver/Internet" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
