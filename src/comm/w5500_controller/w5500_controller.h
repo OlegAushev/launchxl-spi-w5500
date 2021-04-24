@@ -40,12 +40,8 @@ private:
 	static void ReadBuff(uint8_t* p_buff, uint16_t len);
 
 public:
-	W5500_Controller(mcu::SpiModule module, SPI_TransferProtocol protocol, SPI_Mode mode,
-			uint32_t bitrate, uint16_t data_width, mcu::SpiTeMode te_mode,
-			wiz_NetInfo* netinfo, W5500_UdpSettings udp_settings);
-
+	W5500_Controller(mcu::SpiModule module, wiz_NetInfo* netinfo, W5500_UdpSettings udp_settings);
 	int32_t Send(uint8_t* buff, uint16_t len);
-
 	template <typename T, uint32_t array_size>
 	int32_t Send(const SimpleArray<T, array_size>& data);
 };

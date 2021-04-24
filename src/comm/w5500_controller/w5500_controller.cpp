@@ -15,14 +15,13 @@ void reg_wizchip_spi_cbfunc(uint8_t (*spi_rb)(void), void (*spi_wb)(uint8_t wb))
 void reg_wizchip_spiburst_cbfunc(void (*spi_rb)(uint8_t* pBuf, uint16_t len), void (*spi_wb)(uint8_t* pBuf, uint16_t len));
 
 /**
- * @brief Configures W5500
+ * @brief Configures W5500 controller
  * @param module SPI module
- * @return None(constructor)
+ * @param netinfo
+ * @param udp_settings
  */
-W5500_Controller::W5500_Controller(mcu::SpiModule module, SPI_TransferProtocol protocol, SPI_Mode mode,
-								uint32_t bitrate, uint16_t data_width, mcu::SpiTeMode te_mode,
-								wiz_NetInfo* netinfo, W5500_UdpSettings udp_settings)
-	: spi_(module, protocol, mode, bitrate, data_width, te_mode)
+W5500_Controller::W5500_Controller(mcu::SpiModule module, wiz_NetInfo* netinfo, W5500_UdpSettings udp_settings)
+	: spi_(module, SPI_PROT_POL0PHA1, SPI_MODE_MASTER, 6250000, 8, mcu::SPI_TE_SW)
 	, udp_(udp_settings)
 {
 	W5500_Controller::spi_base_ = spi_.GetBase();
@@ -45,11 +44,6 @@ W5500_Controller::W5500_Controller(mcu::SpiModule module, SPI_TransferProtocol p
 	}
 }
 
-/**
- * @brief
- * @param
- * @return
- */
 int32_t W5500_Controller::Send(uint8_t* buff, uint16_t len)
 {
     if (len > W5500_MAX_DATA_SIZE)
@@ -64,8 +58,6 @@ int32_t W5500_Controller::Send(uint8_t* buff, uint16_t len)
  ******************************************************************************/
 /**
  * @brief
- * @param
- * @return
  */
 void W5500_Controller::ChipSelect()
 {
@@ -74,8 +66,6 @@ void W5500_Controller::ChipSelect()
 
 /**
  * @brief
- * @param
- * @return
  */
 void W5500_Controller::ChipDeselect()
 {
@@ -84,8 +74,7 @@ void W5500_Controller::ChipDeselect()
 
 /**
  * @brief
- * @param
- * @return
+ * @param data
  */
 void W5500_Controller::WriteByte(uint8_t data)
 {
@@ -96,7 +85,6 @@ void W5500_Controller::WriteByte(uint8_t data)
 
 /**
  * @brief
- * @param
  * @return
  */
 uint8_t W5500_Controller::ReadByte()
@@ -107,8 +95,8 @@ uint8_t W5500_Controller::ReadByte()
 
 /**
  * @brief
- * @param
- * @return
+ * @param p_buff
+ * @param len
  */
 void W5500_Controller::WriteBuff(uint8_t* p_buff, uint16_t len)
 {
@@ -121,8 +109,8 @@ void W5500_Controller::WriteBuff(uint8_t* p_buff, uint16_t len)
 
 /**
  * @brief
- * @param
- * @return
+ * @param p_buff
+ * @param len
  */
 void W5500_Controller::ReadBuff(uint8_t* p_buff, uint16_t len)
 {

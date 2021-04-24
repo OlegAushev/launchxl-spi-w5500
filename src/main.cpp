@@ -71,8 +71,7 @@ void main()
 	mcu::ConfigureSystick();
 
 	/* SPI */
-	W5500_Controller w5500(mcu::SPIA, SPI_PROT_POL0PHA1, SPI_MODE_MASTER, 6250000, 8, mcu::SPI_TE_SW,
-			&wiz_netinfo, udp_settings);
+	W5500_Controller w5500(mcu::SPIA, &wiz_netinfo, udp_settings);
 	/* INTERRUPTS */
 	EINT;	// Enable Global interrupt INTM
 	ERTM;	// Enable Global realtime interrupt

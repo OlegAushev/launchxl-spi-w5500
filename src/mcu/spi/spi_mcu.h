@@ -52,30 +52,27 @@ public:
 	uint32_t GetBase() const { return module_bases_[module_]; }
 	uint32_t GetTePin() const { return te_pins_[module_]; }
 
-	/*
+	/**
 	 * @brief
-	 * @param
-	 * @return
+	 * @param data
 	 */
 	void SendNonBlocking(uint16_t data)
 	{
 		SPI_writeDataNonBlocking(module_base_, data << (16 - data_width_));
 	}
 
-	/*
+	/**
 	 * @brief
-	 * @param
-	 * @return
+	 * @param data
 	 */
 	void SendBlockingNonFifo(uint16_t data)
 	{
 		SPI_writeDataBlockingNonFIFO(module_base_, data << (16 - data_width_));
 	}
 
-	/*
+	/**
 	 * @brief
-	 * @param
-	 * @return
+	 * @param data
 	 */
 	void SendBlockingFifo(uint16_t data)
 	{

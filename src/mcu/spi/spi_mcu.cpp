@@ -25,8 +25,12 @@ const uint32_t Spi::sw_te_pin_configs_[3] =	{GPIO_61_GPIO61, GPIO_66_GPIO66, GPI
 
 /**
  * @brief Configures SPI module
- * @param module SPI module
- * @return None(constructor)
+ * @param module
+ * @param protocol
+ * @param mode
+ * @param bitrate
+ * @param data_width
+ * @param te_mode
  */
 Spi::Spi(SpiModule module, SPI_TransferProtocol protocol, SPI_Mode mode,
 			uint32_t bitrate, uint16_t data_width, SpiTeMode te_mode)
@@ -74,11 +78,6 @@ Spi::Spi(SpiModule module, SPI_TransferProtocol protocol, SPI_Mode mode,
 	SPI_enableModule(module_base_);
 	SPI_enableTalk(module_base_);
 }
-
-
-
-
-
 
 
 } // namespace mcu
