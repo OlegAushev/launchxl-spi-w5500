@@ -17,10 +17,8 @@
 /*============================================================================*/
 /*============================ CPU TIMERS ISRs ===============================*/
 /*============================================================================*/
-/*
+/**
  * @brief CPU Timer 0 ISR
- * @param None
- * @return None
  */
 __interrupt void mcu::Clock::OnInterrupt()
 {
@@ -35,10 +33,8 @@ __interrupt void mcu::Clock::OnInterrupt()
 }
 
 
-/*
+/**
  * @brief CPU Timer 1 ISR
- * @param None
- * @return None
  */
 __interrupt void mcu::SystickISR()
 {}

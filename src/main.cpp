@@ -1,6 +1,4 @@
-
-/*=====================*/
-#define USE_PROFILER
+//#define DONT_RECEIVE_ONLY_SEND
 
 #include "F28x_Project.h"
 #include "F2837xD_Ipc_drivers.h"
@@ -39,12 +37,10 @@ W5500_UdpSettings udp_settings = {
 		.ip_tx = EDGE_IP
 };
 
-SimpleArray<float, W5500_MAX_DATA_SIZE/4> big_data;
+SimpleArray<float, W5500_MAX_DATA_SIZE/4> big_array;
 
 /**
  * @brief main()
- * @param None
- * @return None
  */
 void main()
 {
@@ -57,9 +53,9 @@ void main()
 	ConfigureLogPin(67, GPIO_CORE_CPU1);
 
 	Interrupt_initModule();			// Initializes PIE and clear PIE registers. Disables CPU interrupts.
-	// Clears all CPU interrupt flags.
-	Interrupt_initVectorTable();	// Initialize the PIE vector table with pointers to the shell interrupt
-	// Service Routines (ISR).
+									// Clears all CPU interrupt flags.
+	Interrupt_initVectorTable();	// Initializes the PIE vector table with pointers to the shell interrupt
+									// Service Routines (ISR).
 
 	/* CLOCK */
 	mcu::Clock clock(1, GPIO_CORE_CPU1, GPIO_CORE_CPU1);
@@ -70,32 +66,41 @@ void main()
 	clock.SetFlagPeriod(mcu::TIMER_FLAG_4, 1000);
 	mcu::ConfigureSystick();
 
-	/* SPI */
+	/* SPI & W5500 */
 	W5500_Controller w5500(mcu::SPIA, &wiz_netinfo, udp_settings);
 	/* INTERRUPTS */
 	EINT;	// Enable Global interrupt INTM
 	ERTM;	// Enable Global realtime interrupt
 
+	int counter = 0;
+
 	while (true)
 	{
-		DEVICE_DELAY_US(1E6);
-
+#ifdef DONT_RECEIVE_ONLY_SEND
+		++counter;
 		for (size_t i = 0; i < W5500_MAX_DATA_SIZE/4; ++i)
 		{
-			big_data[i] = 100 * sinf(2 * MATH_PI * i / (W5500_MAX_DATA_SIZE/4));
+			big_array[i] = counter * sinf(2 * MATH_PI * i / (W5500_MAX_DATA_SIZE/4));
 		}
-		w5500.Send(big_data);
-
-		/*
-		char message_tx[128];
-		sprintf(message_tx, "Current time is %lu.%lu\n", clock.GetSec(), clock.GetMilliSec());
-		w5500.Send((uint8_t*)message_tx, strlen(message_tx));
-		 */
-		/*
+		w5500.Send(big_array);
+		DEVICE_DELAY_US(1e6);
+#else
 		char message_rx[128] = {0};
 		recvfrom(SOCKET_RX, (uint8_t*)message_rx, 128, NULL, &udp_settings.port_rx);
-		w5500.Send((uint8_t*)message_rx, strlen(message_rx));
-		 */
+		if (message_rx[0] == 0x04)
+		{
+			++counter;
+			for (size_t i = 0; i < W5500_MAX_DATA_SIZE/4; ++i)
+			{
+				big_array[i] = counter * sinf(2 * MATH_PI * i / (W5500_MAX_DATA_SIZE/4));
+			}
+			w5500.Send(big_array);
+		}
+		else if (message_rx[0] == 0x05)
+		{
+			counter = 0;
+		}
+#endif
 	}
 }
 
