@@ -1,5 +1,7 @@
 # Тестовый проект для LAUNCHXL-F28379D & WIZnet W5500
 
+Проект тестировался в Code Composer Studio v10.1.1, компилятор TI v20.12.0.STS
+
 ## Подключение W5500 Ethernet Shield к LAUNCHXL-F28379D
 
 | W5500 Ethernet Shield | LAUNCHXL-F28379D |
