@@ -2,6 +2,10 @@
 
 Проект тестировался в Code Composer Studio v10.1.1, компилятор TI v20.12.0.STS
 
+Частота SPI - 12.5 MHz
+
+Для перезагрузки системы сначала нажать Reset на W5500 Ethernet Shield, затем - на LAUNCHXL-F28379D
+
 ## Подключение W5500 Ethernet Shield к LAUNCHXL-F28379D
 
 | W5500 Ethernet Shield | LAUNCHXL-F28379D |

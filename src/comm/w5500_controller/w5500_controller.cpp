@@ -21,7 +21,7 @@ void reg_wizchip_spiburst_cbfunc(void (*spi_rb)(uint8_t* pBuf, uint16_t len), vo
  * @param udp_settings
  */
 W5500_Controller::W5500_Controller(mcu::SpiModule module, wiz_NetInfo* netinfo, W5500_UdpSettings udp_settings)
-	: spi_(module, SPI_PROT_POL0PHA1, SPI_MODE_MASTER, 6250000, 8, mcu::SPI_TE_SW)
+	: spi_(module, SPI_PROT_POL0PHA1, SPI_MODE_MASTER, 12500000, 8, mcu::SPI_TE_SW)
 	, udp_(udp_settings)
 {
 	W5500_Controller::spi_base_ = spi_.GetBase();
