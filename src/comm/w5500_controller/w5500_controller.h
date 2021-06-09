@@ -43,7 +43,7 @@ public:
 	W5500_Controller(mcu::SpiModule module, wiz_NetInfo* netinfo, W5500_UdpSettings udp_settings);
 	int32_t Send(uint8_t* buff, uint16_t len);
 	template <typename T, uint32_t array_size>
-	int32_t Send(const SimpleArray<T, array_size>& data);
+	int32_t Send(const BasicArray<T, array_size>& data);
 };
 
 /**
@@ -52,7 +52,7 @@ public:
  * @return
  */
 template <typename T, uint32_t array_size>
-int32_t W5500_Controller::Send(const SimpleArray<T, array_size>& data)
+int32_t W5500_Controller::Send(const BasicArray<T, array_size>& data)
 {
 	if (sizeof(T) != 2)	/* Only arrays of 32-bit elements are supported now */
 	{

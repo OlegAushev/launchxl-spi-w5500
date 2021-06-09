@@ -18,9 +18,9 @@ namespace mcu {
 enum TimerFlag
 {
 	TIMER_FLAG_1,
-	TIMER_FLAG_2,
-	TIMER_FLAG_3,
-	TIMER_FLAG_4,
+	TIMER_FLAG2,
+	TIMER_FLAG3,
+	TIMER_FLAG4,
 };
 
 enum LaunchPadLed

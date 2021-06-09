@@ -1,4 +1,6 @@
 //#define DONT_RECEIVE_ONLY_SEND
+#define WIZNET_RESET_ACTIVE 0
+
 
 #include "F28x_Project.h"
 #include "F2837xD_Ipc_drivers.h"
@@ -37,7 +39,7 @@ W5500_UdpSettings udp_settings = {
 		.ip_tx = EDGE_IP
 };
 
-SimpleArray<float, W5500_MAX_DATA_SIZE/4> big_array;
+BasicArray<float, W5500_MAX_DATA_SIZE/4> big_array;
 
 /**
  * @brief main()
@@ -61,10 +63,20 @@ void main()
 	mcu::Clock clock(1, GPIO_CORE_CPU1, GPIO_CORE_CPU1);
 	clock.LedOff(mcu::LED_BLUE);
 	clock.SetFlagPeriod(mcu::TIMER_FLAG_1, 500);
-	clock.SetFlagPeriod(mcu::TIMER_FLAG_2, 2);
-	clock.SetFlagPeriod(mcu::TIMER_FLAG_3, 100);
-	clock.SetFlagPeriod(mcu::TIMER_FLAG_4, 1000);
+	clock.SetFlagPeriod(mcu::TIMER_FLAG2, 2);
+	clock.SetFlagPeriod(mcu::TIMER_FLAG3, 100);
+	clock.SetFlagPeriod(mcu::TIMER_FLAG4, 1000);
 	mcu::ConfigureSystick();
+
+	/* RESET WIZNET SHIELD */
+	GPIO_setPadConfig(104, GPIO_PIN_TYPE_STD);
+	GPIO_setPinConfig(GPIO_104_GPIO104);
+	GPIO_setDirectionMode(104, GPIO_DIR_MODE_OUT);
+	GPIO_writePin(104, 1-WIZNET_RESET_ACTIVE);
+	DEVICE_DELAY_US(1E6);
+	GPIO_writePin(104, WIZNET_RESET_ACTIVE);
+	DEVICE_DELAY_US(1E6);
+	GPIO_writePin(104, 1-WIZNET_RESET_ACTIVE);
 
 	/* SPI & W5500 */
 	W5500_Controller w5500(mcu::SPIA, &wiz_netinfo, udp_settings);

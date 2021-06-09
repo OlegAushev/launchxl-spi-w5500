@@ -97,7 +97,7 @@ inline void CalculateSvPwm(float angle,
 						   float magnitude,
 						   float dc_voltage,
 						   uint16_t pwm_counter_period,
-						   SimpleArray<T, 3>& pwm_cmp_values)
+						   BasicArray<T, 3>& pwm_cmp_values)
 {
 	int32_t sector = (int32_t)(angle / ToRadian(60));
 	float beta = angle - (float)sector * ToRadian(60);
@@ -107,7 +107,7 @@ inline void CalculateSvPwm(float angle,
 	float tb2 = sqrtf(3) * (magnitude / dc_voltage) * sinf(beta);
 	float tb0 = (1.f - tb1 - tb2) / 2.f;
 
-	SimpleArray<float, 3> pulse_times;
+	BasicArray<float, 3> pulse_times;
 	switch (sector)
 	{
 	case 0:

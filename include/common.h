@@ -24,9 +24,9 @@ namespace Fault {
 enum Fault
 {
 	NONE = 0x00,
-	UNDERVOLTAGE = 0x01,
-	OVERVOLTAGE = 0x02,
-	OVERCURRENT = 0x04,
+	DC_UNDERVOLTAGE = 0x01,
+	DC_OVERVOLTAGE = 0x02,
+	PHASE_OVERCURRENT = 0x04,
 	DRIVER_FLT = 0x08,
 	JUNCTION_OVERTEMP = 0x10,
 	CASE_OVERTEMP = 0x20
@@ -52,7 +52,7 @@ inline void ResetFault(uint32_t& fault_code)
  * @brief
  */
 template <typename T, uint32_t n>
-class SimpleArray
+class BasicArray
 {
 private:
     T data_[n];
